@@ -7,16 +7,17 @@
           <el-input v-model="loginForm.username" placeholder="请输入用户名" prefix-icon="myicon-user"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" prefix-icon="myicon-key"></el-input>
+          <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" prefix-icon="myicon-key" @keyup.enter.native="login"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="login-btn" >登陆</el-button>
+          <el-button type="primary" class="login-btn" @click='login' >登陆</el-button>
         </el-form-item>
       </el-form>
     </div>
   </div>
 </template>
 <script>
+import { login } from '@/api/login_index.js'
 export default {
   data () {
     return {
@@ -30,6 +31,39 @@ export default {
         ],
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       }
+    }
+  },
+  methods: {
+    login () {
+      this.$refs.loginForm.validate((valid) => {
+        if (valid) {
+          login(this.loginForm)
+            .then((res) => {
+              if (res.data.meta.status === 200) {
+                console.log(res)
+                localStorage.setItem('itcast_project_token', res.data.data.token)
+                this.$router.push({ name: 'home' })
+              } else {
+                this.$message({
+                  message: res.data.meta.msg,
+                  type: 'warning'
+                })
+              }
+            })
+            .catch(() => {
+              this.$message({
+                message: '服务器异常',
+                type: 'error'
+              })
+            })
+        } else {
+          this.$message({
+            message: '请输入所有必填数据',
+            type: 'warning'
+          })
+          return false
+        }
+      })
     }
   }
 }
@@ -48,7 +82,7 @@ export default {
     padding: 0px 40px 15px 40px;
     margin: 200px auto;
     background: rgb(29, 122, 122);
-    border-radius: 40px;
+    border-radius: 20px;
     .avatar {
       position: relative;
       left: 50%;
