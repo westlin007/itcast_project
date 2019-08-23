@@ -4,7 +4,8 @@
       <el-aside width="200px">
         <img src="../assets/itcast_logo.png" alt="" class="logo">
         <el-menu
-          default-active="2"
+          :router='true'
+          :unique-opened='true'
           class="el-menu-vertical-demo"
           background-color="#545c64"
           text-color="#fff"
@@ -15,7 +16,7 @@
               <i class="el-icon-location"></i>
               <span>用户管理</span>
             </template>
-            <el-menu-item index="1-1">
+            <el-menu-item index="/home/users">
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>用户列表</span>
