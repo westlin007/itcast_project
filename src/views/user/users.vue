@@ -33,7 +33,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="light" content="编辑" placement="top">
-            <el-button type="primary" icon="el-icon-edit"></el-button>
+            <el-button type="primary" icon="el-icon-edit" @click='showEditDialog(scope.row)'></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="light" content="分配角色" placement="top">
             <el-button type="success" icon="el-icon-s-operation"></el-button>
@@ -75,10 +75,28 @@
         <el-button type="primary" @click='add'>确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑用户对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="editDialogFormVisible">
+      <el-form :model="editForm" :label-width="'80px'" :rules='rules' ref='editForm'>
+        <el-form-item label="用户名">
+          <el-input v-model="editForm.username" autocomplete="off" disabled style='width:100px'></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop='email'>
+          <el-input v-model="editForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop='mobile'>
+          <el-input v-model="editForm.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click='edituser'>确 定</el-button>
+      </div>
+    </el-dialog>
     </div>
 </template>
 <script>
-import { getAllUsers, addUser } from '@/api/user_index.js'
+import { getAllUsers, addUser, editUser } from '@/api/user_index.js'
 export default {
   data () {
     return {
@@ -96,6 +114,13 @@ export default {
         password: '',
         email: '',
         mobile: ''
+      },
+      editDialogFormVisible: false,
+      editForm: {
+        username: '',
+        email: '',
+        mobile: '',
+        id: ''
       },
       rules: {
         username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -151,12 +176,38 @@ export default {
             })
             .catch(err => {
               console.log(err)
-              this.$message.success('用户新增失败')
+              this.$message.warning('用户新增失败')
             })
         } else {
           this.$message.warning('请输入所有必填数据')
         }
       })
+    },
+    // 弹出编辑对话框
+    showEditDialog (row) {
+      this.editDialogFormVisible = true
+      console.log(row)
+      this.editForm.id = row.id
+      this.editForm.username = row.username
+      this.editForm.email = row.email
+      this.editForm.mobile = row.mobile
+    },
+    // 实现用户编辑
+    edituser () {
+      editUser(this.editForm)
+        .then(res => {
+          console.log(res)
+          if (res.data.meta.status === 200) {
+            this.$message.success('编辑用户成功')
+            this.init()
+            this.editDialogFormVisible = false
+            // 清空表单元素的数据--重置表单元素
+            this.$refs.editForm.resetFields()
+          }
+        })
+        .catch(() => {
+          this.$message.warning('用户编辑失败')
+        })
     }
   },
   mounted () {
