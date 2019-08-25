@@ -10,7 +10,7 @@ import router from '@/router/router.js'
 Vue.use(ElementUI)
 // 添加导航守卫
 router.beforeEach((to, from, next) => {
-  console.log(to)
+  // console.log(to)
   let mytoken = localStorage.getItem('itcast_project_token')
   if (mytoken || to.path === '/login') {
     next()
