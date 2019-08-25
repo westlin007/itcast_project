@@ -44,6 +44,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页区域 -->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="userobj.pagenum"
+      :page-sizes="[1, 2, 3, 4,5]"
+      :page-size="userobj.pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
     </div>
 </template>
 <script>
@@ -51,6 +61,7 @@ import { getAllUsers } from '@/api/user_index.js'
 export default {
   data () {
     return {
+      total: 0,
       status: true,
       userList: [],
       userobj: {
@@ -61,12 +72,21 @@ export default {
     }
   },
   methods: {
+    handleSizeChange (val) {
+      this.userobj.pagesize = val
+      this.init()
+    },
+    handleCurrentChange (val) {
+      this.userobj.pagenum = val
+      this.init()
+    },
     init () {
       getAllUsers(this.userobj)
         .then(res => {
           console.log(res)
           if (res.data.meta.status === 200) {
             this.userList = res.data.data.users
+            this.total = res.data.data.total
           } else if (res.data.meta.status === 400) {
             this.$message.error(res.data.meta.msg)
             this.$router.push({ name: 'login' })
