@@ -25,3 +25,19 @@ export const editUser = (data) => {
     data
   })
 }
+
+// 获取所有用户角色数据
+export const getAllRoleList = () => {
+  return axios({
+    url: 'roles'
+  })
+}
+
+// 实现用户角色的分配
+export const grantUserRole = (data) => {
+  return axios({
+    url: `users/${data.id}/role`,
+    method: 'put',
+    data: { rid: data.rid }
+  })
+}
