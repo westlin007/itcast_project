@@ -41,3 +41,11 @@ export const grantUserRole = (data) => {
     data: { rid: data.rid }
   })
 }
+
+// 实现用户的删除
+export const delUserById = (id) => {
+  return axios({
+    url: `users/${id}`,
+    method: 'delete'
+  })
+}

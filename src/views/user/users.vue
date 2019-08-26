@@ -39,7 +39,7 @@
             <el-button type="success" icon="el-icon-s-operation" @click='showGrantDialog(scope.row)'></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="light" content="删除" placement="top">
-            <el-button type="warning" icon="el-icon-delete"></el-button>
+            <el-button type="warning" icon="el-icon-delete" @click='deluser(scope.row.id)'></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -120,7 +120,7 @@
     </div>
 </template>
 <script>
-import { getAllUsers, addUser, editUser, grantUserRole, getAllRoleList } from '@/api/user_index.js'
+import { getAllUsers, addUser, editUser, grantUserRole, getAllRoleList, delUserById } from '@/api/user_index.js'
 export default {
   data () {
     return {
@@ -269,6 +269,41 @@ export default {
       } else {
         this.$message.error('请选择角色')
       }
+    },
+    // 根据id删除用户数据
+    deluser (id) {
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        delUserById(id)
+          .then(res => {
+            if (res.data.meta.status === 200) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.init()
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.data.meta.msg
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'error',
+              message: '删除失败'
+            })
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   },
   mounted () {
