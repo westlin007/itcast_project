@@ -27,7 +27,7 @@
       <el-table-column prop="mobile" label="电话"></el-table-column>
       <el-table-column label="用户状态" width="80">
         <template slot-scope='scope'>
-          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949" @change='changeState(scope.row.id,scope.row.mg_state)'></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -120,7 +120,7 @@
     </div>
 </template>
 <script>
-import { getAllUsers, addUser, editUser, grantUserRole, getAllRoleList, delUserById } from '@/api/user_index.js'
+import { getAllUsers, addUser, editUser, grantUserRole, getAllRoleList, delUserById, updateUserState } from '@/api/user_index.js'
 export default {
   data () {
     return {
@@ -304,6 +304,21 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    // 修改用户状态
+    changeState (id, type) {
+      updateUserState(id, type)
+        .then(res => {
+          if (res.data.meta.status === 200) {
+            this.$message.success('修改状态成功')
+            this.init()
+          } else {
+            this.$message.error(res.data.meta.msg)
+          }
+        })
+        .catch(() => {
+          this.$message.error('修改状态失败')
+        })
     }
   },
   mounted () {
