@@ -17,7 +17,7 @@
       >
         <el-button slot="append" icon="el-icon-search" @click='init'></el-button>
       </el-input>
-      <el-button type="success" @click='addDialogFormVisible = true'>添加用户</el-button>
+      <el-button type="success" plain @click='addDialogFormVisible = true'>添加用户</el-button>
     </div>
     <!-- 表格展示区域 -->
     <el-table border :data="userList" style="width: 100%;margin-top:15px">
