@@ -284,6 +284,8 @@ export default {
                 type: 'success',
                 message: '删除成功!'
               })
+              // 如果删除的是当前页最后一条数据就跳到前一页
+              this.userobj.pagenum = Math.ceil((this.total - 1) / this.userobj.pagesize) < this.userobj.pagenum ? --this.userobj.pagenum : this.userobj.pagenum
               this.init()
             } else {
               this.$message({
